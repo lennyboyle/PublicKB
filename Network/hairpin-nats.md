@@ -14,26 +14,17 @@ This article discusses what a Hairpin NAT is and whether it is supported within 
 
 **Q - What is a hairpin NAT?**
 
-A - Also referred to as "hairpinning", hairpinning describes a communication between two hosts behind the same NAT device using their mapped endpoint. 
+A - Also referred to as "hairpinning", hairpinning describes a communication between two hosts behind the same NAT device using their mapped endpoint.
 
-**Q- Does CenturyLink Cloud allow hairpinning or Hairpin NATs?**
+**Q - Does CenturyLink Cloud allow hairpinning or Hairpin NATs?**
 
-A - No.
+A - YES (As of 2/2/16).
 
-### Workarounds
+**Q - What does the traffic flow look like?**
 
-**Q - What workarounds are available?**
+A - Internal traffic destined to a IP address that resolves in a static mapping will have it’s source address NAT’d to that of the closest interface to the resolved endpoint.  This is to ensure that the traffic flow utilizes the firewall and does not result in a half open state because of a direct server return.
 
-A - There are three solutions which are outlined below.
+**Q - Can I still filter source addresses destined to my mapped endpoint?**
 
-Option 1.(easiest) - Utilize a host file locally on the VM's where the DNS name needs to resolve locally.  There are a lot of resources available on the web with instructions for modifying your hosts file, but here are some basic instructions.
+A - Yes but RFC1918 space will need to be added.
 
-Windows
-- From Start -> Run or from within an explorer window in Server 2012, type notepad c:\windows\system32\drivers\etc\hosts. At the bottom of the file, add a line including the internal IP, hit tab, and then input the DNS name that you want to resolve to the internal IP instead of the external IP.
-
-Linux
-- Use SSHto login to your Linux server. Edit the /etc/hosts file with an editor such as vi, pico or emacs. At the bottom of the file, add a line including the internal (private) IP, hit tab, and then input the DNS name that you want to resolve to the internal (private) IP instead of the external (public) IP. Save the /etc/hosts file.
-
-Option 2.(situational) - Utilize the Shared Load Balancer for the public address.  Because the Load Balancer sits in a DMZ zone, the public addresses used here are available from within the same data center.  The Shared Load Balancer only supports traffic on port 80 and 443, and does not support SSL Offloading.  Instructions for utilizing the Shared Load Balancer are found here:  https://www.ctl.io/knowledge-base/network/creating-a-self-service-load-balancing-configuration/
-
-Option 3. Configure a local DNS server and point your servers to use that.  This DNS server will have A records to direct traffic as required and use Root Hints to perform all other external record lookups.
